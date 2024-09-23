@@ -1,0 +1,76 @@
+\chapter{Introduction}
+\label{cha:introduction}
+
+\textit{Here are a few expert from my thesis to populate the Table of Contents and demonstrate basic reference and citation commands.}
+
+\section{Distributed \& parallel computing}
+
+Modern supercomputers feature an unprecedented level of parallelism.
+For instance, the current flagship supercomputer of Japan, Fugaku, is composed of over 158 thousand compute nodes, each node containing a many-core 48 core processor~\cite{fugaku}.
+Harnessing the processing power of such large systems poses a challenge to application developers.
+
+Borrowing the definition from van Steen and Tanenbaum~\cite{distributedsystems}:
+\begin{quote}
+A distributed system is a collection of autonomous computing elements that appears to its users as a single coherent system.
+\end{quote}
+Programming models for distributed programming should therefore present a single coherent system for programmers to be able to reason and create distributed programs with ease.
+For the sake of example, here are two more citations comprising some conference proceedings and journal article~\cite{habanerox10,resilientx10}.
+
+\begin{figure}
+	\centering
+\includegraphics[trim={3.5cm, 10.8cm, 4.2cm, 3cm},clip,width=.3\textwidth]{1-introduction/nqueens}
+\caption{One of 92 solutions to the 8-Queens problem}
+\label{fig:nqueenssolution}
+\end{figure}
+
+A distributed \emph{Hello World} program demonstrating the use of the \lstinline|finish| and \lstinline|asyncAt| constructs is presented in Listing~\ref{lst:javahello}.
+A possible output of this program shown in Listing~\ref{lst:javahellooutput}.
+In this example, the \verb|finish| method is called on line~7 to~11, with an asynchronous activity spawned on each place participating in the computation using a for loop and the \lstinline|asyncAt| method on line~9. 
+The program will not progress beyond the \lstinline|finish| until every place prints its ``hello'' message.
+
+\begin{lstlisting}[float,caption={Distributed Hello World in Java},label={lst:javahello}]
+	import static apgas.Constructs.*;
+	import apgas.Place;
+	class HelloWorld {
+		public static void main(String[] args) {
+			System.out.println("Running main at " + here() + " of " + 
+			places().size() + " places");
+			finish(() -> {
+				for (Place p : places()) {
+					asyncAt(p, () -> System.out.println("Hello from " + here()));
+				}
+			});
+			System.out.println("Bye");
+		}
+	}
+\end{lstlisting}
+
+\begin{lstlisting}[float,caption={Possible output of the Listing~\ref{lst:javahello} program running with 4 processes},label={lst:javahellooutput}]
+	Running main at place(0) of 4 places
+	Hello from place(0)
+	Hello from place(3)
+	Hello from place(2)
+	Hello from place(1)
+	Bye
+\end{lstlisting}
+
+
+The hardware and software configuration of the cluster and supercomputer used in our evaluations are summarized in Table~\ref{tbl:ofp}.
+
+\begin{table}[ht]
+	\centering
+	\caption{Characteristics of the OakForest-PACS supercomputer}
+	\label{tbl:ofp}
+	\begin{tabular}{ll}
+		\toprule
+		Server Type & Fujitsu PRIMERGY CX1640 M1 \\
+		\midrule
+		Nb of nodes & 8208 \\
+		Processor & Intel Xeon Phi 7250 (1.4 GHz, 68 cores) \\
+		RAM & 96GB DDR4 \\
+		Interconnection & Intel Omni-Path (100 Gbps) \\
+		Java version & Open JDK 1.8.0\_222 \\
+		MPI version & Intel MPI with MPJ-Express v0\_44 Java native bindings \\
+		\bottomrule
+	\end{tabular}
+\end{table}

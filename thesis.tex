@@ -1,0 +1,322 @@
+\documentclass[11pt,twoside,a4paper]{book}
+
+% Set the line spacing to 1.5. I find it a good compromise between single (too compact) and double (too wide)
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel} % Ensures (among other things) that the copyright date is in the appropriate format.
+\usepackage{csquotes} % Provides environment to quote passages
+\usepackage{luatexja} % for use of Kanjis in the title pages
+\usepackage[useregional]{datetime2} % Package to automatically adjust the dates
+\DTMsavedate{today}{2022-07-15} % TODO adjust here to your submission day
+
+% The xstring package and the command defined just below are used when displaying dates in Japanese
+\usepackage{xstring}
+\newcommand{\tofullwidth}[1]{%
+	\StrSubstitute{#1}{0}{０}[\x]%
+	\StrSubstitute{\x}{1}{１}[\x]%
+	\StrSubstitute{\x}{2}{２}[\x]%
+	\StrSubstitute{\x}{3}{３}[\x]%
+	\StrSubstitute{\x}{4}{４}[\x]%
+	\StrSubstitute{\x}{5}{５}[\x]%
+	\StrSubstitute{\x}{6}{６}[\x]%
+	\StrSubstitute{\x}{7}{７}[\x]%
+	\StrSubstitute{\x}{8}{８}[\x]%
+	\StrSubstitute{\x}{9}{９}[\x]%
+	\x}
+
+% Settings for urls (package url also works, but in my recent experience xurl works better)
+\usepackage[hyphens,spaces]{xurl}
+
+% Setting the margins. The left margin is larger to account for binding in a book
+\usepackage[left=1.5in, right=1in, top=1.25in, bottom=1.25in, headheight=13.6pt]{geometry}
+
+% Ajust what is displayed in the headers
+\usepackage{fancyhdr}
+\rhead{}
+\lhead{\nouppercase{\textsc{\leftmark}}}
+\renewcommand{\headrulewidth}{0.7pt}
+\fancyhead{}
+\fancyhead[LE]{\nouppercase\leftmark}
+\fancyhead[RO]{\nouppercase\rightmark}
+
+% Small tweak to get blank pages when clearing pages between chapters
+% This avoids the headers being printed at the top of what are otherwise empty pages
+\makeatletter
+\def\cleardoublepage{\clearpage\if@twoside \ifodd\c@page\else
+	\hbox{}\thispagestyle{empty}\newpage\if@twocolumn\hbox{}\newpage\fi\fi\fi}
+\makeatother
+
+% Creation of a small command used to make sure the copyright page is a left page
+\newcommand*\cleartoleftpage{%
+	\clearpage
+	\ifodd\value{page}\hbox{}\newpage\fi
+}
+
+% Settings to Table of Contents / section numbering depth
+\setcounter{tocdepth}{3} % set depth of Table of contents (how deep are things displayed in the ToC)
+\setcounter{secnumdepth}{3} % set depth of section numbering (with value 3, everything up to \subsubsection{} is numbered)
+
+% Settings for bibliography
+% I prefer to use biber, make sure to change this setting in the program you use to compile LaTeX
+% You can also choose a different style/sorting option 
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+% This template assumes that the metadata for your bibliography is placed in file bibli.bib
+% If your references are spread in multiple files, simply repeat the command below as necessary
+\addbibresource{bibli.bib} 
+
+% Environment for mathematical definitions / environment
+\usepackage{amsmath, amssymb, amsthm}
+
+% Packages for figures
+\usepackage{graphicx}
+\usepackage[hang, small, bf, margin=20pt, tableposition=top]{caption}
+\usepackage{subcaption}
+
+% Settings for tables
+\usepackage{multirow}
+\usepackage{booktabs}
+
+% Settings for Listings
+\usepackage{listings}
+\lstset{
+	language=Java,					% most of the time it will be Java
+	breaklines=true,                 % sets automatic line breaking
+	captionpos=b,                    % sets the caption-position to bottom
+	frame=single,	                 % adds a frame around the code in the listing
+	numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+	numbersep=5pt,                   % how far the line-numbers are from the code
+	numberstyle=\small,
+	basicstyle=\small,
+	stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+	tabsize=2	                   % sets default tabsize to 2 spaces
+}
+% Small tweak to add spacing between the chapters in the list of listings
+% This is done by default for List of Figures and List of Tables, but needs to be adjusted manually for Listings
+\makeatletter
+\let\my@chapter\@chapter
+\renewcommand*{\@chapter}{%
+	\addtocontents{lol}{\protect\addvspace{10\p@}}%
+	\my@chapter}
+\makeatother
+
+
+% Information about the document
+\title{High-productivity Abstractions and Efficient Runtime for Dynamically Load-balanced Distributed Programs on Multi/Many-core Clusters} % TODO put your English title here
+\author{FINNERTY Patrick Martin} % TODO put your name here
+% Adding a few extra commands to record the Japanese title and author names, the university etc:
+\newcommand{\titlejp}{マルチコア／メニーコアクラスタにおける\\動的負荷分散プログラムのための\\高生産性抽象化と効率的ランタイム実装法} %TODO the title of your thesis in Japanese here
+\newcommand{\authorjp}{フィネルティ・パトリック・マルタン} % TODO your name in カタカナ here
+\newcommand{\daigakuin}{神戸大学大学院システム情報学研究科} % TODO the name of your university and graduate school in Japanese
+\newcommand{\gradschool}{Graduate School of System Informatics} % TODO the name of your graduate school in English
+\newcommand{\university}{Kobe University} % TODO the name of your university in English
+
+
+
+% Set metadata and specify desired PDF/A compliance level
+\usepackage[pdfa]{hyperref} % Setting to make clickable references to figure / table / URLs etc.
+\usepackage{hyperxmp}    % Needed for PDF/A compliance
+\usepackage{embedfile}   % Needed for PDF/A compliance
+\usepackage[rgb]{xcolor} % Needed for PDF/A compliance
+\makeatletter
+\hypersetup{%
+bookmarksnumbered,
+linktocpage=true,
+pdftitle={\@author~Ph.D Thesis},
+pdfauthor={\@author},
+pdfsubject={\@title},
+pdflang=en,
+pdfnewwindow=true,
+citecolor={black},
+linkcolor={black},
+urlcolor={black},
+pdfpagemode={UseOutlines},
+pdfapart=3,
+pdfaconformance=B	
+}
+\makeatother
+% The following cryptic lines are needed to make a PDF/A compliant file.
+\embedfile[afrelationship={/Source},ucfilespec={\jobname.tex},mimetype={application/x-tex}]{\jobname.tex}
+\immediate\pdfobj stream attr{/N 3} file{sRGB.icc}
+\pdfcatalog{%
+	/OutputIntents [
+	<<
+	/Type /OutputIntent
+	/S /GTS_PDFA1
+	/DestOutputProfile \the\pdflastobj\space 0 R
+	/OutputConditionIdentifier (sRGB)
+	/Info (sRGB)
+	>>
+	]
+}
+
+
+\begin{document}
+%======================================= Cover page ======================================= 
+\pdfbookmark[0]{Cover}{cover} % Make the cover appear in the bookmarks of the PDF
+\pagenumbering{Roman} % Setting Roman (I, II, ...) numbering for the first 2 pages, this avoids duplicate numbering with the front matter (i, ii, ...) and main matter (1, 2, ...) pages
+\newgeometry{left=1in, right=1in, top=1.25in, bottom=1.25in} % Temporarily re-define the geometry for the cover page to make it centered (left and right margins are equal)
+\begin{titlepage}
+\makeatletter
+\begin{center}
+	\huge{\textbf{博士論文}}
+	
+	\vspace*{\fill}
+	
+	% Below are the English and Japanese title.
+	% TODO You may have to re-write your title manually to introduce line breaks at appropriate places instead of using \@title and \titlejp
+	\LARGE{\textbf{\@title}}\\
+	\vspace{1.5cm}
+	\LARGE{\textbf{\titlejp}}
+	
+	\vspace*{\fill}
+	
+	\textbf{\tofullwidth{\DTMfetchyear{today}年\DTMfetchmonth{today}月}} % Automatic date generation and conversion to Japanese format
+
+	\vspace{1cm}
+	
+	\textbf{\daigakuin}
+
+	\vspace{1cm}
+	\small{\textbf{\authorjp}}\\
+	\Large{\textbf{\@author}}
+\end{center}
+\makeatother
+\end{titlepage}
+\restoregeometry
+
+%============================================ Front matter =========================================
+%--------------------------------------- Front Matter Settings -------------------------------------
+\frontmatter % Uses i, ii, iii numbering
+%--------------------------------------------- Title page ------------------------------------------
+\pagestyle{empty}  % For the title page use the "empty" style (no page number displayed)
+\cleardoublepage
+\pdfbookmark[0]{Titlepage}{title} % Make the title page appear in the bookmarks of the PDF
+\begin{center}
+\makeatletter
+\Large{Doctoral Dissertation}
+
+\vspace*{\fill}
+
+\Large{\MakeUppercase{\@title}}\\
+\vspace{1.5cm}
+\LARGE{\titlejp}
+
+\vspace*{\fill}
+\DTMenglishmonthname{\DTMfetchmonth{today}} \DTMfetchyear{today} % Automatic date generation
+
+\vspace{1cm}
+\gradschool
+
+\university
+
+\vspace{1cm}
+\@author
+
+\makeatother
+\end{center}
+%----------------------------------------- Dedication ----------------------------------------------
+\cleardoublepage
+\thispagestyle{empty} % Also use empty page stlyle for the dedication
+\pdfbookmark[0]{Dedication}{dedication}
+\vspace*{6cm} % TODO Adjust as necessary to make your dedication appear balanced in the page
+\Large{\textit{Here you can put a funny quote, dedicate your work to someone, etc. It's up to you!}} %TODO make your own dedication
+
+%---------------------------------------------------------------------------------------------------
+\pagestyle{plain} % Change to "plain" style to show the page numbers from here onwards
+\normalsize % Restore the font size to normal in case it was unadvertantly changed
+%-------------------------------------------- Abstract ---------------------------------------------
+\include{0-frontmatter/abstract}
+%------------------------------------------ Acknowledgment------------------------------------------
+\include{0-frontmatter/acknowledgment}
+
+% --------------------- Table of Contents / List of Figures / List of Listings ---------------------
+% Note that the \cleardoublepage commands are necessary to make sure the bookmarks land on the correct page
+\cleardoublepage
+\pdfbookmark[0]{Table of Contents}{tablecontents}
+\tableofcontents
+
+% The following three lines make sure that:
+% 1. the bookmark for the "List of Figures" lands on the correct page when clicked
+% 2. the "List of Figures" appears in the Table of Contents
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{List of Figures}
+\listoffigures
+
+% Same for the "List of Tables"
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{List of Tables}
+\listoftables
+
+% Similarly for the "Listings"
+% TODO If you do not have any listings, you should remove the following 4 commands
+% You could instead put a "List of Algorithms in a similar way if that is what you are using.
+% You could also keep the ToC/LoF/LoT only. Your thesis, your choice.
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Listings}
+\lstlistoflistings
+
+
+%---------------------------------------------------------------------------------------------------
+% Here we record the number of pages of the frontmatter in a counter.
+% It will be used to compute the total nb of pages of the thesis (frontmatter + mainmatter)
+% to print the correct copyright notice at the end
+\newcounter{frontpages}
+\setcounter{frontpages}{\value{page}}
+\ifodd\value{frontpages}\stepcounter{frontpages}\fi % Value is odd if last page with text is a right page. Increment by one to account for the empty right page which precedes the first chapter in the mainmatter.
+%========================================== Main matter ============================================
+\mainmatter
+\pagestyle{fancy}
+
+% TODO include the LaTeX files that constitute your various chapters
+% I recommend you keep them (and the extra files for the figures for each chapter) in dedicated directories
+\include{1-introduction/introduction}
+%\include{2-background/background}
+% ...
+
+% Print the bibliography after the conclusion (with the option to make it appear in the ToC)
+\printbibliography[heading=bibintoc]
+
+% Switch to "appendix"
+\appendix
+% Similar to your thesis main chapters, add your chapters for the appendix.
+% If you do not have any appendix, this part can be ommited.
+\include{A-appendix/sourcecode}
+%\include{B-appendix/secondappendix}
+% ...
+
+%----------------- List your publications in an unnumbered chapter --------------
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Publications}
+\include{Z-publications/publications}
+
+% ------------------------------- Copyright Statement ----------------------------
+\cleartoleftpage % small command to make sure this copyright statement is on a "left" page
+\thispagestyle{empty} % Switch to empty style (does not show page number)
+\pdfbookmark[0]{Copyright}{copyright} % Add bookmark
+\vspace*{\fill}
+\newcounter{pagesnocover}
+\setcounter{pagesnocover}{\value{page}}
+\addtocounter{pagesnocover}{\value{frontpages}} % Add the nb of pages in the frontmatter
+
+% Now print the copyright message with the appropriate nb of pages
+\makeatletter
+\noindent
+Doctor Thesis, \university\\
+``\emph{\@title},'' \the\value{pagesnocover}~pages\\
+Submitted \DTMusedate{today}.\\
+When published on the Kobe University institutional repository \textit{Kernel}, the publication date shall appear on the cover of the repository version.
+
+\begin{flushright}
+\MakeUppercase{
+\textcopyright \@author\\
+All Rights Reserved, \DTMfetchyear{today}}
+\end{flushright}
+\makeatother
+
+\end{document}
